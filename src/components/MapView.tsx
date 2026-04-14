@@ -2,7 +2,7 @@ import { useRef, useEffect } from 'react'
 import L from 'leaflet'
 import type { LocationRow } from '@/types'
 import { parseActivities, buildPinHtml } from '@/lib/activityTypes'
-// import 'leaflet/dist/leaflet.css'
+import 'leaflet/dist/leaflet.css'
 
 interface MapViewProps {
   locations: LocationRow[]
