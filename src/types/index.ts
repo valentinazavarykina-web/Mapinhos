@@ -3,6 +3,16 @@ export type ChildAge =
   | 'preschool (3-5)'
   | 'kids (6-12)'
 
+// Exact values from the what_do_you_feel_like_doing_today column
+export type Mood =
+  | 'Find new place for daily routine with my baby'
+  | 'Plan a fun weekend together'
+  | 'Discover something new for me and my child'
+  | 'Find something to do on a rainy day'
+  | 'Find a place where I can relax while my child is busy'
+  | 'Connect with other moms'
+  | ''
+
 export interface LocationRow {
   id: number
   created_at: string
@@ -18,6 +28,7 @@ export interface LocationRow {
   restroom: string | null
   languages: string[]
   photo: string | null
+  what_do_you_feel_like_doing_today: string | null
 }
 
 export function parsePhotos(raw: string | null): string[] {
@@ -40,22 +51,26 @@ export interface Database {
   }
 }
 
-// ── Filter state ──────────────────────────────────────────────────────────────
-// theater removed from PlaceType — it lives as an activity_type only
+// Filters — mood is new first filter, shade/restroom/language removed
 export type PlaceType = 'everyday' | 'event' | ''
-export type ToggleValue = 'any' | 'yes'
-export type Language = 'english' | 'portuguese' | 'russian' | ''
 export type ViewMode = 'map' | 'list'
 
 export interface Filters {
+  mood: Mood
   childAge: ChildAge | ''
   type: PlaceType
-  dateFrom: string   // ISO date or '' — start of event date range
-  dateTo: string     // ISO date or '' — end of event date range
-  shade: ToggleValue
-  restroom: ToggleValue
-  language: Language
+  dateFrom: string
+  dateTo: string
 }
+
+export const MOOD_OPTIONS: { value: Mood; emoji: string }[] = [
+  { value: 'Find new place for daily routine with my baby',         emoji: '🌅' },
+  { value: 'Plan a fun weekend together',                           emoji: '🎉' },
+  { value: 'Discover something new for me and my child',            emoji: '🔍' },
+  { value: 'Find something to do on a rainy day',                   emoji: '🌧️' },
+  { value: 'Find a place where I can relax while my child is busy', emoji: '☕' },
+  { value: 'Connect with other moms',                               emoji: '👩‍👩‍👧' },
+]
 
 export const CHILD_AGE_OPTIONS: { value: ChildAge; label: string }[] = [
   { value: 'babies&toddlers (0-2)', label: '👶 Babies & Toddlers (0–2)' },
@@ -63,7 +78,8 @@ export const CHILD_AGE_OPTIONS: { value: ChildAge; label: string }[] = [
   { value: 'kids (6-12)',           label: '🧑 Kids (6–12)'             },
 ]
 
-export const LANGUAGE_OPTIONS: { value: Language; label: string; flag: string }[] = [
+// Language options kept for content display only (not a filter anymore)
+export const LANGUAGE_OPTIONS: { value: string; label: string; flag: string }[] = [
   { value: 'portuguese', label: 'Português', flag: '🇵🇹' },
   { value: 'english',    label: 'English',   flag: '🇬🇧' },
   { value: 'russian',    label: 'Русский',   flag: '🇷🇺' },
@@ -84,11 +100,9 @@ export function ageLabel(age: ChildAge, t: { age02: string; age35: string; age61
 }
 
 export const DEFAULT_FILTERS: Filters = {
+  mood: '',
   childAge: '',
   type: '',
   dateFrom: '',
   dateTo: '',
-  shade: 'any',
-  restroom: 'any',
-  language: '',
 }

@@ -7,7 +7,7 @@ const STORAGE_KEY = 'mapinhos_locale'
 function getInitialLocale(): Locale {
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored === 'en' || stored === 'ru') return stored
+    if (stored === 'en' || stored === 'ru' || stored === 'pt') return stored
   } catch { /* ignore */ }
   return 'en'
 }

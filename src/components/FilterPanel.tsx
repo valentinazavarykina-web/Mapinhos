@@ -1,32 +1,41 @@
-import type { ChildAge, Language, PlaceType, ToggleValue } from '@/types'
-import { CHILD_AGE_OPTIONS, LANGUAGE_OPTIONS } from '@/types'
+import type { ChildAge, PlaceType, Mood } from '@/types'
+import { CHILD_AGE_OPTIONS, MOOD_OPTIONS } from '@/types'
 import type { Translations } from '@/i18n'
 
 interface FilterPanelProps {
   isOpen: boolean
+  mood: Mood
   childAge: ChildAge | ''
   type: PlaceType
   dateFrom: string
   dateTo: string
-  shade: ToggleValue
-  restroom: ToggleValue
-  language: Language
   t: Translations
+  onMood: (m: Mood) => void
   onChildAge: (age: ChildAge | '') => void
   onType: (t: PlaceType) => void
   onDateFrom: (d: string) => void
   onDateTo: (d: string) => void
-  onShade: (v: ToggleValue) => void
-  onRestroom: (v: ToggleValue) => void
-  onLanguage: (l: Language) => void
   onApply: () => void
   onReset: () => void
 }
 
+// Map DB mood value → translated label key
+function moodLabel(value: Mood, t: Translations): string {
+  const map: Record<string, string> = {
+    'Find new place for daily routine with my baby':         t.moodDailyRoutine,
+    'Plan a fun weekend together':                           t.moodWeekend,
+    'Discover something new for me and my child':            t.moodDiscoverNew,
+    'Find something to do on a rainy day':                   t.moodRainyDay,
+    'Find a place where I can relax while my child is busy': t.moodRelax,
+    'Connect with other moms':                               t.moodMoms,
+  }
+  return map[value] ?? value
+}
+
 export function FilterPanel(props: FilterPanelProps) {
   const {
-    isOpen, childAge, type, dateFrom, dateTo, shade, restroom, language, t,
-    onChildAge, onType, onDateFrom, onDateTo, onShade, onRestroom, onLanguage,
+    isOpen, mood, childAge, type, dateFrom, dateTo, t,
+    onMood, onChildAge, onType, onDateFrom, onDateTo,
     onApply, onReset,
   } = props
 
@@ -34,7 +43,20 @@ export function FilterPanel(props: FilterPanelProps) {
     <div className={`filter-panel${isOpen ? ' filter-panel--open' : ''}`}>
       <div className="filter-grid">
 
-        {/* Child age */}
+        {/* 1. What do you feel like doing today? */}
+        <div className="filter-group filter-group--full">
+          <label className="filter-label">{t.whatDoYouFeelLike}</label>
+          <select value={mood} onChange={e => onMood(e.target.value as Mood)}>
+            <option value="">{t.anyMood}</option>
+            {MOOD_OPTIONS.map(o => (
+              <option key={o.value} value={o.value}>
+                {o.emoji} {moodLabel(o.value, t)}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* 2. Child's age */}
         <div className="filter-group">
           <label className="filter-label">{t.childAge}</label>
           <select value={childAge} onChange={e => onChildAge(e.target.value as ChildAge | '')}>
@@ -45,7 +67,7 @@ export function FilterPanel(props: FilterPanelProps) {
           </select>
         </div>
 
-        {/* Place type — no theater option */}
+        {/* 3. Place type */}
         <div className="filter-group">
           <label className="filter-label">{t.typeOfPlace}</label>
           <select value={type} onChange={e => onType(e.target.value as PlaceType)}>
@@ -82,43 +104,6 @@ export function FilterPanel(props: FilterPanelProps) {
             </div>
           </div>
         )}
-
-        {/* Shade */}
-        <div className="filter-group">
-          <label className="filter-label">{t.shadeOrShelter}</label>
-          <div className="toggle-row">
-            <button className={`toggle-btn${shade === 'any' ? ' toggle-btn--active' : ''}`} onClick={() => onShade('any')}>
-              {t.doesntMatter}
-            </button>
-            <button className={`toggle-btn${shade === 'yes' ? ' toggle-btn--active' : ''}`} onClick={() => onShade('yes')}>
-              {t.yes}
-            </button>
-          </div>
-        </div>
-
-        {/* Restroom */}
-        <div className="filter-group">
-          <label className="filter-label">{t.restroom}</label>
-          <div className="toggle-row">
-            <button className={`toggle-btn${restroom === 'any' ? ' toggle-btn--active' : ''}`} onClick={() => onRestroom('any')}>
-              {t.doesntMatter}
-            </button>
-            <button className={`toggle-btn${restroom === 'yes' ? ' toggle-btn--active' : ''}`} onClick={() => onRestroom('yes')}>
-              {t.yes}
-            </button>
-          </div>
-        </div>
-
-        {/* Language */}
-        <div className="filter-group">
-          <label className="filter-label">{t.spokenLanguage}</label>
-          <select value={language} onChange={e => onLanguage(e.target.value as Language)}>
-            <option value="">{t.anyLanguage}</option>
-            {LANGUAGE_OPTIONS.map(l => (
-              <option key={l.value} value={l.value}>{l.flag} {l.label}</option>
-            ))}
-          </select>
-        </div>
 
       </div>
 

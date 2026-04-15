@@ -17,8 +17,7 @@ export default function App() {
 
   const {
     filters, pendingFilters, activeCount,
-    setChildAge, setType, setDateFrom, setDateTo,
-    setShade, setRestroom, setLanguage,
+    setMood, setChildAge, setType, setDateFrom, setDateTo,
     apply, reset,
   } = useFilters()
 
@@ -38,6 +37,7 @@ export default function App() {
         <div className="logo">Mapi<em>nhos</em></div>
 
         <div className="header-controls">
+          {/* Map / List toggle */}
           <div className="view-toggle">
             <button
               className={`view-toggle__btn${viewMode === 'map' ? ' view-toggle__btn--active' : ''}`}
@@ -49,6 +49,7 @@ export default function App() {
             >☰ {t.listView}</button>
           </div>
 
+          {/* Language switcher — EN / RU / PT */}
           <div className="lang-switcher">
             {LOCALES.map(l => (
               <button
@@ -59,6 +60,7 @@ export default function App() {
             ))}
           </div>
 
+          {/* Filter toggle */}
           <button
             className="filter-toggle"
             onClick={() => setPanelOpen(o => !o)}
@@ -74,21 +76,17 @@ export default function App() {
 
       <FilterPanel
         isOpen={panelOpen}
+        mood={pendingFilters.mood}
         childAge={pendingFilters.childAge}
         type={pendingFilters.type}
         dateFrom={pendingFilters.dateFrom}
         dateTo={pendingFilters.dateTo}
-        shade={pendingFilters.shade}
-        restroom={pendingFilters.restroom}
-        language={pendingFilters.language}
         t={t}
+        onMood={setMood}
         onChildAge={setChildAge}
         onType={setType}
         onDateFrom={setDateFrom}
         onDateTo={setDateTo}
-        onShade={setShade}
-        onRestroom={setRestroom}
-        onLanguage={setLanguage}
         onApply={handleApply}
         onReset={handleReset}
       />
