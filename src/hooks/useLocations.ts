@@ -21,21 +21,32 @@ export function useLocations(filters: Filters): UseLocationsResult {
   useEffect(() => {
     let cancelled = false
 
-    async function fetch() {
+    async function fetchData() {
       setLoading(true)
       setError(null)
       try {
         let query = supabase.from('locations').select('*').order('name')
 
-        if (filters.shade === 'yes')    query = query.eq('shade', 'yes')
-        if (filters.restroom === 'yes') query = query.eq('restroom', 'yes')
-        if (filters.language)           query = query.contains('languages', [filters.language])
-
+        // Mood filter — DB column: what_do_you_feel_like_doing_today
+        // The column may contain multiple values separated by ';'
+        // We do client-side contains check for flexibility
         const { data, error: dbErr } = await query
         if (cancelled) return
         if (dbErr) throw dbErr
 
         let result: LocationRow[] = data ?? []
+
+        // mood — match if the column contains the selected mood value
+        if (filters.mood) {
+          result = result.filter(loc => {
+            const raw = loc.what_do_you_feel_like_doing_today
+            if (!raw) return false
+            // support semicolon-separated multiple moods per location
+            return raw.split(/[;|]/).map(s => s.trim()).some(
+              v => v.toLowerCase() === filters.mood.toLowerCase()
+            )
+          })
+        }
 
         // child age
         if (filters.childAge) {
@@ -45,17 +56,14 @@ export function useLocations(filters: Filters): UseLocationsResult {
           )
         }
 
-        // place type (normalise 'every day' etc.)
+        // place type
         if (filters.type) {
           result = result.filter(loc => normalisePlaceType(loc.place_type) === filters.type)
         }
 
-        // date range — only applied when type === 'event' and at least one date is set
-        // locations without an event_date are excluded when a date filter is active
+        // date range
         if (filters.type === 'event' && (filters.dateFrom || filters.dateTo)) {
           result = result.filter(loc => {
-            // LocationRow doesn't have event_date — it's stored in place_type or comments
-            // We compare against a hypothetical event_date field; if absent, exclude
             const raw = (loc as LocationRow & { event_date?: string }).event_date
             if (!raw) return false
             if (filters.dateFrom && raw < filters.dateFrom) return false
@@ -73,7 +81,7 @@ export function useLocations(filters: Filters): UseLocationsResult {
       }
     }
 
-    void fetch()
+    void fetchData()
     return () => { cancelled = true }
   }, [filters, tick])
 
