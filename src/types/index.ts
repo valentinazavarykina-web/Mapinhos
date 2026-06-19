@@ -63,19 +63,19 @@ export interface Filters {
   dateTo: string
 }
 
-export const MOOD_OPTIONS: { value: Mood; emoji: string }[] = [
-  { value: 'Find new place for daily routine with my baby',         emoji: '🌅' },
-  { value: 'Plan a fun weekend together',                           emoji: '🎉' },
-  { value: 'Discover something new for me and my child',            emoji: '🔍' },
-  { value: 'Find something to do on a rainy day',                   emoji: '🌧️' },
-  { value: 'Find a place where I can relax while my child is busy', emoji: '☕' },
-  { value: 'Connect with other moms',                               emoji: '👩‍👩‍👧' },
+export const MOOD_OPTIONS: { value: Mood }[] = [ 
+  { value: 'Find new place for daily routine with my baby'},
+  { value: 'Plan a fun weekend together'},
+  { value: 'Discover something new for me and my child'},
+  { value: 'Find something to do on a rainy day'},
+  { value: 'Find a place where I can relax while my child is busy'},
+  { value: 'Connect with other moms'},
 ]
 
 export const CHILD_AGE_OPTIONS: { value: ChildAge; label: string }[] = [
-  { value: 'babies&toddlers (0-2)', label: '👶 Babies & Toddlers (0–2)' },
-  { value: 'preschool (3-5)',       label: '🧒 Preschool (3–5)'         },
-  { value: 'kids (6-12)',           label: '🧑 Kids (6–12)'             },
+  { value: 'babies&toddlers (0-2)', label: 'Babies & Toddlers (0–2)' },
+  { value: 'preschool (3-5)', label: 'Preschool (3–5)' },
+  { value: 'kids (6-12)', label: 'Kids (6–12)' },
 ]
 
 // Language options kept for content display only (not a filter anymore)
