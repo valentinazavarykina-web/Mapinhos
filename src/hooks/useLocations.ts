@@ -26,7 +26,6 @@ export function useLocations(filters: Filters): UseLocationsResult {
       setError(null)
       try {
         let query = supabase.from('locations').select('*').order('name')
-
         // Mood filter — DB column: what_do_you_feel_like_doing_today
         // The column may contain multiple values separated by ';'
         // We do client-side contains check for flexibility
