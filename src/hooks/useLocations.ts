@@ -39,7 +39,7 @@ export function useLocations(filters: Filters): UseLocationsResult {
         // mood — match if the column contains the selected mood value
         if (filters.mood) {
           result = result.filter(loc => {
-            const raw = loc.what_do_you_feel_like_doing_today
+            const raw = loc.["what_do_you_feel_like_doing_today?"]
             if (!raw) return false
             // support semicolon-separated multiple moods per location
             return raw.split(/[;|]/).map(s => s.trim()).some(
